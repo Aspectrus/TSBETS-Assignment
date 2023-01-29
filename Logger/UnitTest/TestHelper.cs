@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTest
 {
     public static class TestHelper
     {
-        private const string _logUnitLocation = @"C:\LogUnitTest";
-
         public static string GenerateTestMethodFolder()
         {
-            var directory = Path.Combine(_logUnitLocation, Guid.NewGuid().ToString());
+            var logTestFolder = GetConfigValue("UnitTestLogFolder");
+
+            var directory = Path.Combine(logTestFolder, Guid.NewGuid().ToString());
 
             while (Directory.Exists(directory))
             {
-                directory = Path.Combine(_logUnitLocation, Guid.NewGuid().ToString());
+                directory = Path.Combine(logTestFolder, Guid.NewGuid().ToString());
             }
             return directory;
+        }
+        private static string GetConfigValue(string key)
+        {
+            return new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppSettings")[key];
         }
 
     }
